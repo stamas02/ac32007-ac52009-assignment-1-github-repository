@@ -38,6 +38,7 @@ import static org.imgscalr.Scalr.*;
 import org.imgscalr.Scalr.Method;
 
 import uk.ac.dundee.computing.aec.instagrim.lib.*;
+import uk.ac.dundee.computing.aec.instagrim.stores.Comment;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 //import uk.ac.dundee.computing.aec.stores.TweetStore;
 
@@ -65,6 +66,38 @@ public class PicModel {
 	     session.execute( 
 	             boundStatement.bind( 
 	            		 UUID, comid ,User, Comment));        
+	}
+	
+	public java.util.LinkedList<Comment> getPicComments(java.util.UUID PicID)
+	{
+    	java.util.LinkedList<Comment> comments = new java.util.LinkedList<Comment>();
+
+    	
+    	Session session = cluster.connect("instagrim");
+        ResultSet rs = null;
+        PreparedStatement ps = session.prepare("select user,comment,commentid from piccomments where picid =?");
+        BoundStatement boundStatement = new BoundStatement(ps);
+        rs = session.execute( // this is where the query is executed
+                boundStatement.bind( // here you are binding the 'boundStatement'
+                		PicID));
+        if (rs.isExhausted()) 
+        {
+            System.out.println("No Comment");
+            return null;
+        } 
+        else 
+        {
+            for (Row row : rs) 
+            {
+            	Comment tmp = new Comment();
+            	tmp.setComment(PicID, row.getUUID("commentid"), row.getString("user"), row.getString("comment"));
+            	comments.add(tmp);
+            	
+            }
+        }
+        
+        
+        return comments;
 	}
 	
     public void insertPic(byte[] b, String type, String name, String folder, String user) {

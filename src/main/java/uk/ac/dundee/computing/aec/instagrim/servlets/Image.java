@@ -30,6 +30,7 @@ import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.lib.LoginChecker;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
+import uk.ac.dundee.computing.aec.instagrim.stores.Comment;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -129,12 +130,14 @@ public class Image extends HttpServlet {
     	
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
-  
+        
+        java.util.LinkedList<Comment> comments = tm.getPicComments(java.util.UUID.fromString(Image));
 
        
         
         RequestDispatcher rd = request.getRequestDispatcher("/ImageDisplay.jsp");
         request.setAttribute("PicID", Image);
+        request.setAttribute("Comments", comments);
         rd.forward(request, response);
     }
     
