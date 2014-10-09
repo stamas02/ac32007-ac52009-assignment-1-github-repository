@@ -19,10 +19,10 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.utils.Bytes;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,8 +30,11 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.LinkedList;
+
 import javax.imageio.ImageIO;
+
 import static org.imgscalr.Scalr.*;
+
 import org.imgscalr.Scalr.Method;
 
 import uk.ac.dundee.computing.aec.instagrim.lib.*;
@@ -50,6 +53,22 @@ public class PicModel {
         this.cluster = cluster;
     }
 
+    
+	public void PostAComment(String Comment,java.util.UUID UUID, String User)
+	{
+		Convertors convertor = new Convertors();
+		java.util.UUID comid = convertor.getTimeUUID();
+		 Session session = cluster.connect("instagrim");
+	     PreparedStatement ps = session.prepare("insert into piccomments (picid,commentid,user,commnet) Values(?,?,?,?)");
+	       
+	     BoundStatement boundStatement = new BoundStatement(ps);
+	     session.execute( 
+	             boundStatement.bind( 
+	            		 UUID, comid ,User, Comment));
+	        
+	        
+	}
+	
     public void insertPic(byte[] b, String type, String name, String folder, String user) {
         try {
             Convertors convertor = new Convertors();
@@ -249,5 +268,8 @@ public class PicModel {
         return p;
 
     }
+    
+    
+
 
 }

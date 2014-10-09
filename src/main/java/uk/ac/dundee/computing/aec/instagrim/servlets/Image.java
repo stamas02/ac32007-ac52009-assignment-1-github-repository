@@ -95,13 +95,13 @@ public class Image extends HttpServlet {
         }
         switch (command) {
             case 1:
-                DisplayImage(Convertors.DISPLAY_PROCESSED,args[2], response);
+                DisplayImage(Convertors.DISPLAY_PROCESSED,args[2], request, response);
                 break;
             case 2:
                 DisplayImageList(User,args[2], request, response);
                 break;
             case 3:
-                DisplayImage(Convertors.DISPLAY_THUMB,args[2],  response);
+                DisplayImage(Convertors.DISPLAY_THUMB,args[2], request, response);
                 break;
             default:
                 error("Bad Operator", response);
@@ -118,13 +118,17 @@ public class Image extends HttpServlet {
 
     }
 
-    private void DisplayImage(int type,String Image, HttpServletResponse response) throws ServletException, IOException {
+    private void DisplayImage(int type,String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
   
         
         Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
+        RequestDispatcher rd = request.getRequestDispatcher("/ImageDisplay.jsp");
+        request.setAttribute("MyPic", p);
+        rd.forward(request, response);
         
+        /*
         OutputStream out = response.getOutputStream();
 
         response.setContentType(p.getType());
@@ -137,6 +141,7 @@ public class Image extends HttpServlet {
             out.write(buffer, 0, length);
         }
         out.close();
+        */
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -171,6 +176,9 @@ public class Image extends HttpServlet {
         }
 
     }
+    
+    
+    
 
     private void error(String mess, HttpServletResponse response) throws ServletException, IOException {
 
