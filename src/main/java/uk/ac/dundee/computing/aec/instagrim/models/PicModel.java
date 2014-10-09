@@ -59,14 +59,12 @@ public class PicModel {
 		Convertors convertor = new Convertors();
 		java.util.UUID comid = convertor.getTimeUUID();
 		 Session session = cluster.connect("instagrim");
-	     PreparedStatement ps = session.prepare("insert into piccomments (picid,commentid,user,commnet) Values(?,?,?,?)");
+	     PreparedStatement ps = session.prepare("insert into piccomments (picid,commentid,user,comment) Values(?,?,?,?)");
 	       
 	     BoundStatement boundStatement = new BoundStatement(ps);
 	     session.execute( 
 	             boundStatement.bind( 
-	            		 UUID, comid ,User, Comment));
-	        
-	        
+	            		 UUID, comid ,User, Comment));        
 	}
 	
     public void insertPic(byte[] b, String type, String name, String folder, String user) {
@@ -183,8 +181,7 @@ public class PicModel {
     
     public java.util.LinkedList<Pic> getPicsForUser(String User, String Folder) {
     	
-    	System.out.println(User + "UNA");
-    	System.out.println(Folder + "fold");
+
         java.util.LinkedList<Pic> Pics = new java.util.LinkedList<>();
         Session session = cluster.connect("instagrim");
         PreparedStatement ps = session.prepare("select picid from userpiclist where user =? AND folder=? ALLOW FILTERING");

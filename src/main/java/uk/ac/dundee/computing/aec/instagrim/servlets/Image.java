@@ -39,7 +39,9 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 @WebServlet(urlPatterns = {
     "/Image",
     "/Image/*",
+    "/rImage/*",
     "/Thumb/*",
+    "/rThumb/*",
     "/Images",
     "/Images/*"
 })
@@ -58,11 +60,11 @@ public class Image extends HttpServlet {
      */
     public Image() {
         super();
-        // TODO Auto-generated constructor stub
-        CommandsMap.put("Image", 1);
+        // TODO Auto-generated constructor sub
+        CommandsMap.put("rImage", 1);
         CommandsMap.put("Images", 2);
-        CommandsMap.put("Thumb", 3);
-
+        CommandsMap.put("rThumb", 3);
+        CommandsMap.put("Image", 4);
     }
 
     public void init(ServletConfig config) throws ServletException {
@@ -103,6 +105,9 @@ public class Image extends HttpServlet {
             case 3:
                 DisplayImage(Convertors.DISPLAY_THUMB,args[2], request, response);
                 break;
+            case 4:
+            	ImagePage(Convertors.DISPLAY_PROCESSED,args[2], request, response);
+                break;
             default:
                 error("Bad Operator", response);
         }
@@ -118,17 +123,30 @@ public class Image extends HttpServlet {
 
     }
 
-    private void DisplayImage(int type,String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    private void ImagePage(int type, String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    	
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
   
+
+       
         
-        Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
         RequestDispatcher rd = request.getRequestDispatcher("/ImageDisplay.jsp");
-        request.setAttribute("MyPic", p);
+        request.setAttribute("PicID", Image);
         rd.forward(request, response);
-        
-        /*
+    }
+    
+    private void DisplayImage(int type,String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    	
+    	
+    	 PicModel tm = new PicModel();
+         tm.setCluster(cluster);
+   
+         
+         Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
         OutputStream out = response.getOutputStream();
 
         response.setContentType(p.getType());
@@ -141,7 +159,7 @@ public class Image extends HttpServlet {
             out.write(buffer, 0, length);
         }
         out.close();
-        */
+        
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
