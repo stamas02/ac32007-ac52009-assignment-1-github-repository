@@ -15,7 +15,7 @@ import com.datastax.driver.core.Cluster;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
 import uk.ac.dundee.computing.aec.instagrim.lib.LoginChecker;
-import uk.ac.dundee.computing.aec.instagrim.models.User;
+import uk.ac.dundee.computing.aec.instagrim.models.UserModel;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.UserProfile;
 
@@ -63,7 +63,7 @@ public class Profile extends HttpServlet {
 	
 	private void DisplayProfile(String username, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
-		User user = new User();
+		UserModel user = new UserModel();
 		user.setCluster(cluster);
 		UserProfile userprofile =  user.getUserprofile("stamas01");
 		RequestDispatcher rd = request.getRequestDispatcher("/profile.jsp");

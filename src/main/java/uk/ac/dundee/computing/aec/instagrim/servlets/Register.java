@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
-import uk.ac.dundee.computing.aec.instagrim.models.User;
+import uk.ac.dundee.computing.aec.instagrim.models.UserModel;
 import uk.ac.dundee.computing.aec.instagrim.stores.UserProfile;
 
 /**
@@ -69,7 +69,7 @@ public class Register extends HttpServlet {
 		}
 
         
-        User us=new User();
+        UserModel us=new UserModel();
         us.setCluster(cluster);
         us.RegisterUser(new_userprofile, password);
         
