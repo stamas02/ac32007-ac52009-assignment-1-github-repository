@@ -30,8 +30,9 @@
        
         <article>
             <h3>Register as user</h3>
-            <form method="POST"  action="Register">
+            <form method="POST" enctype="multipart/form-data" action="Register">
                 <ul>
+                	<li> Profile Picture: <input type="file" name="profilePic"> </li>
                     <li>User Name <input type="text" name="username"></li>
                     <li>Password <input type="password" name="password"></li>
                     <li>First name <input type="text" name="firstname"></li>
@@ -64,9 +65,10 @@
 						</select>
 						
 					</li>
+					
                 </ul>
                 <br/>
-                <input type="submit" value="Regidter"> 
+                <input type="submit" value="Register"> 
             </form>
 
         </article>

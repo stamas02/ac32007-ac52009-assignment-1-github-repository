@@ -1,15 +1,32 @@
-package uk.ac.dundee.computing.aec.instagrim.lib;
+package uk.ac.dundee.computing.aec.instagrim.lib; 
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.util.StringTokenizer;
+
+
+
+
+
+
+
+import javax.imageio.ImageIO;
 //import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
+
 import com.eaio.uuid.UUID;
 
 public final class Convertors {
     public static int DISPLAY_IMAGE=0;
     public static int DISPLAY_THUMB=1;
     public static int DISPLAY_PROCESSED=2;
+    public static int DISPLAY_PROFILE=3;
+    
     public void Convertors() {
 
     }
@@ -18,7 +35,43 @@ public final class Convertors {
         return java.util.UUID.fromString(new com.eaio.uuid.UUID().toString());
     }
     
+    public static BufferedImage createImageFromBytes(byte[] b) 
+    {
+    	   InputStream in = new ByteArrayInputStream(b);
+    	   try {
+			BufferedImage bImageFromConvert = ImageIO.read(in);
+			return bImageFromConvert;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+    }
     
+    public static byte[] createBytesFromImage(BufferedImage b, String type)
+    {
+    	try 
+    	{
+    		
+	    	byte[] imageInByte;
+	    	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    	   String[] types = SplitFiletype(type);
+	    	   
+			   ImageIO.write(b,types[types.length-1], baos);
+			   System.out.println(types[types.length-1]);
+	    	   baos.flush();
+	    	  
+	    	   imageInByte = baos.toByteArray();
+	    	   baos.close();
+	
+	    	return imageInByte;
+    	} 
+    	catch (IOException e) 
+    	{
+    		e.printStackTrace();
+    		return null;
+    	}
+    }
 
     public static byte[] asByteArray(java.util.UUID uuid) {
 
@@ -66,6 +119,8 @@ public final class Convertors {
             // System.out.print(Integer.toHexString(val)+",");
         }
 
+
+        
 	  //System.out.println();
     }
 

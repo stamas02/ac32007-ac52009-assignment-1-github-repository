@@ -239,9 +239,15 @@ public class PicModel {
         return Pics;
     }
     
-    
-
     public Pic getPic(int image_type, java.util.UUID picid) {
+    	return getPic( image_type, picid, "");
+    }
+    
+    public Pic getPic(int image_type, String User) {
+    	return getPic( image_type, null, User);
+    }
+
+    public Pic getPic(int image_type, java.util.UUID picid, String User) {
         Session session = cluster.connect("instagrim");
         ByteBuffer bImage = null;
         String type = null;
@@ -258,12 +264,25 @@ public class PicModel {
             } else if (image_type == Convertors.DISPLAY_THUMB) {
                 ps = session.prepare("select thumb,imagelength,thumblength,type from pics where picid =? ALLOW FILTERING");
             } else if (image_type == Convertors.DISPLAY_PROCESSED) {
-                ps = session.prepare("select processed,processedlength,type from pics where picid =? ALLOW FILTERING");
+                ps = session.prepare("select processed,piclength,type from pics where picid =? ALLOW FILTERING");
+            } else if (image_type == Convertors.DISPLAY_PROFILE) {
+                ps = session.prepare("select profilepic,piclength,type from userprofiles where login =? ALLOW FILTERING");
             }
-            BoundStatement boundStatement = new BoundStatement(ps);
-            rs = session.execute( // this is where the query is executed
-                    boundStatement.bind( // here you are binding the 'boundStatement'
-                            picid));
+            
+            if (image_type != Convertors.DISPLAY_PROFILE)
+            {
+	            BoundStatement boundStatement = new BoundStatement(ps);
+	            rs = session.execute( // this is where the query is executed
+	                    boundStatement.bind( // here you are binding the 'boundStatement'
+	                            picid));
+            }
+            else
+            {
+	            BoundStatement boundStatement = new BoundStatement(ps);
+	            rs = session.execute( // this is where the query is executed
+	                    boundStatement.bind( // here you are binding the 'boundStatement'
+	                            User));
+            }
 
             if (rs.isExhausted()) {
                 System.out.println("No Images returned");
@@ -274,13 +293,20 @@ public class PicModel {
                         bImage = row.getBytes("image");
                         length = row.getInt("imagelength");
                         folder = row.getString("folder");
+                        
                     } else if (image_type == Convertors.DISPLAY_THUMB) {
                         bImage = row.getBytes("thumb");
                         length = row.getInt("thumblength");
+                        
                 
                     } else if (image_type == Convertors.DISPLAY_PROCESSED) {
                         bImage = row.getBytes("processed");
                         length = row.getInt("processedlength");
+                        
+                    }
+                    else if (image_type == Convertors.DISPLAY_PROFILE) {
+                        bImage = row.getBytes("profilepic");
+                        length = row.getInt("piclength");
                     }
                     
                     type = row.getString("type");

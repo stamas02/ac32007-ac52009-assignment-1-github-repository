@@ -49,7 +49,9 @@ public class Profile extends HttpServlet {
 		String args[] = Convertors.SplitRequestPath(request);
 	
 		if (LoginChecker.ValidateSession(request))
-			DisplayProfile(args[1],request,response);
+		{
+			DisplayProfile(args[1],LoginChecker.LoggedInUser(request),request,response);
+		}
 		else
 		{
 			RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
@@ -61,7 +63,7 @@ public class Profile extends HttpServlet {
 		
 	}
 	
-	private void DisplayProfile(String username, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	private void DisplayProfile(String profile_username,String username, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		UserModel user = new UserModel();
 		user.setCluster(cluster);

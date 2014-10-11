@@ -1,5 +1,6 @@
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
+
 import com.datastax.driver.core.Cluster;
 
 import java.io.BufferedInputStream;
@@ -44,7 +45,8 @@ import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
     "/Thumb/*",
     "/rThumb/*",
     "/Images",
-    "/Images/*"
+    "/Images/*",
+    "/rProfileImage/*"
 })
 @MultipartConfig
 
@@ -66,6 +68,7 @@ public class Image extends HttpServlet {
         CommandsMap.put("Images", 2);
         CommandsMap.put("rThumb", 3);
         CommandsMap.put("Image", 4);
+        CommandsMap.put("rProfileImage", 5);
     }
 
     public void init(ServletConfig config) throws ServletException {
@@ -109,6 +112,9 @@ public class Image extends HttpServlet {
             case 4:
             	ImagePage(Convertors.DISPLAY_PROCESSED,args[2], request, response);
                 break;
+            case 5:
+            	DisplayImage(Convertors.DISPLAY_PROFILE,args[2], request, response);
+                break;
             default:
                 error("Bad Operator", response);
         }
@@ -147,9 +153,12 @@ public class Image extends HttpServlet {
     	
     	 PicModel tm = new PicModel();
          tm.setCluster(cluster);
-   
-         
-         Pic p = tm.getPic(type,java.util.UUID.fromString(Image));
+         Pic p;
+        if(Convertors.DISPLAY_PROFILE != type)
+        	p = tm.getPic(type,java.util.UUID.fromString(Image));
+        else
+        	p = tm.getPic(type,Image);//It is misleading since here the Image string contains the username.
+        
         OutputStream out = response.getOutputStream();
 
         response.setContentType(p.getType());
