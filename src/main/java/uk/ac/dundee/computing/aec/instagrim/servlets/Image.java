@@ -10,10 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -27,11 +29,13 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 
+import uk.ac.dundee.computing.aec.instagrim.lib.AuthenticateImage;
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
-import uk.ac.dundee.computing.aec.instagrim.lib.LoginChecker;
+import uk.ac.dundee.computing.aec.instagrim.lib.JsonRenderer;
+import uk.ac.dundee.computing.aec.instagrim.models.FriendModel;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
-import uk.ac.dundee.computing.aec.instagrim.stores.Comment;
+import uk.ac.dundee.computing.aec.instagrim.stores.SComment;
 import uk.ac.dundee.computing.aec.instagrim.stores.LoggedIn;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
 
@@ -83,15 +87,14 @@ public class Image extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // TODO Auto-generated method stub
         String args[] = Convertors.SplitRequestPath(request);
+        boolean isJson = args[args.length-1].equals("json");
         
-        if (!LoginChecker.ValidateSession(request))
-        {
-			RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-	        rd.forward(request, response);
-		}
-        
-        
-    	String User = LoginChecker.LoggedInUser(request);
+
+		HttpSession session = request.getSession();		
+		LoggedIn lg = (LoggedIn) (session.getAttribute("LoggedIn"));
+    	String LoggedInUser = lg.getUsername();
+    	
+    	
         int command;
         try {
             command = (Integer) CommandsMap.get(args[1]);
@@ -101,63 +104,86 @@ public class Image extends HttpServlet {
         }
         switch (command) {
             case 1:
-                DisplayImage(Convertors.DISPLAY_PROCESSED,args[2], request, response);
+                DisplayImage(Convertors.DISPLAY_IMAGE,args[2], args[3], request, response);
                 break;
             case 2:
-                DisplayImageList(User,args[2], request, response);
+            	if (isJson)
+            		imageListjson(LoggedInUser,args[2], args[3], request, response);
+            	else
+            		imageListjsp(LoggedInUser,args[2], args[3], request, response);
                 break;
             case 3:
-                DisplayImage(Convertors.DISPLAY_THUMB,args[2], request, response);
+                DisplayImage(Convertors.DISPLAY_THUMB,args[2], args[3], request, response);
                 break;
             case 4:
-            	ImagePage(Convertors.DISPLAY_PROCESSED,args[2], request, response);
+            	ImagePage(Convertors.DISPLAY_IMAGE,args[2],args[3],  request, response);
                 break;
             case 5:
-            	DisplayImage(Convertors.DISPLAY_PROFILE,args[2], request, response);
+            	DisplayImage(Convertors.DISPLAY_PROFILE,args[2], "", request, response);
                 break;
             default:
                 error("Bad Operator", response);
         }
     }
 
-    private void DisplayImageList(String User, String Folder, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     /Instagrim/Folder/User
+     */
+    private void imageListjsp(String LoggedInUser, String User, String Folder, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        RequestDispatcher rd = request.getRequestDispatcher("/UsersPics.jsp");
+        request.setAttribute("User", User);
+        request.setAttribute("Folder", Folder);
+        rd.forward(request, response);
+
+    }   
+    /**
+    /Instagrim/Folder/User/json
+    */
+    private void imageListjson(String LoggedInUser, String User, String Folder, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PicModel tm = new PicModel();
         tm.setCluster(cluster);
         java.util.LinkedList<Pic> lsPics = tm.getPicsForUser(User, Folder);
-        RequestDispatcher rd = request.getRequestDispatcher("/UsersPics.jsp");
-        request.setAttribute("Pics", lsPics);
-        rd.forward(request, response);
 
+
+        AuthenticateImage ai = new AuthenticateImage();
+        ai.setCluster(cluster);
+        lsPics = ai.RemoveNotAuthorized(LoggedInUser,lsPics);
+        
+        String jasonResponse = JsonRenderer.render(lsPics);
+       
+        response.setContentType("application/json");
+		response.setHeader("Content-Type", "application/json");  
+		PrintWriter out = response.getWriter();
+		out.write(jasonResponse);
     }
 
     
-    private void ImagePage(int type, String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    
+    private void ImagePage(int type, String User, String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     
     	
-        PicModel tm = new PicModel();
-        tm.setCluster(cluster);
-        
-        java.util.LinkedList<Comment> comments = tm.getPicComments(java.util.UUID.fromString(Image));
 
        
         
         RequestDispatcher rd = request.getRequestDispatcher("/ImageDisplay.jsp");
         request.setAttribute("PicID", Image);
-        request.setAttribute("Comments", comments);
+        request.setAttribute("Author", User);
         rd.forward(request, response);
     }
     
-    private void DisplayImage(int type,String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void DisplayImage(int type,String User,String Image, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     	
     	
-    	 PicModel tm = new PicModel();
-         tm.setCluster(cluster);
-         Pic p;
+    	PicModel tm = new PicModel();
+        tm.setCluster(cluster);
+        Pic p;
         if(Convertors.DISPLAY_PROFILE != type)
         	p = tm.getPic(type,java.util.UUID.fromString(Image));
         else
-        	p = tm.getPic(type,Image);//It is misleading since here the Image string contains the username.
+        	p = tm.getPic(type,User);
         
         OutputStream out = response.getOutputStream();
 
@@ -176,6 +202,15 @@ public class Image extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String Folder = request.getParameter("Folder");
+        int Accessability = 0;
+        try
+        {
+        	Accessability = Integer.parseInt(request.getParameter("Accessability"));
+        }
+        catch(Exception e)
+        {
+        	Accessability = 0;
+        }
         
     	for (Part part : request.getParts()) {
             System.out.println("Part Name " + part.getName());
@@ -197,7 +232,7 @@ public class Image extends HttpServlet {
                 System.out.println("Length : " + b.length);
                 PicModel tm = new PicModel();
                 tm.setCluster(cluster);
-                tm.insertPic(b, type, filename, Folder, username);
+                tm.insertPic(b, type, filename, Folder, username, Accessability);
 
                 is.close();
             }
@@ -219,4 +254,11 @@ public class Image extends HttpServlet {
         out.close();
         return;
     }
+    
+    
+    
+   
+
+    
+     
 }

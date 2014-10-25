@@ -13,8 +13,26 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Instagrim</title>
         <link rel="stylesheet" type="text/css" href="/Instagrim/Styles.css" />
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script>
     </head>
     <body>
+    <li><a href="/Instagrim/Logout">Log Out</a></li>
+        <%
+            String User = (String)request.getAttribute("User");
+        %>
+        <script>
+        $( document ).ready(function() {
+        	var imageListjason = $.getJSON( "/Instagrim/Folder/<%= User %>/json", function(frequests) {
+        		if (frequests != "")
+        		{
+        			for (var i = 0; i < frequests.Data.length; i++) { 
+        				$('#folderlist').append("<a href='/Instagrim/Images/" + frequests.Data[i].Author + "/" + frequests.Data[i].FolderName + "' >" + frequests.Data[i].FolderName  + "</a><br/>");
+        			}
+        		}
+        	});
+			
+		});
+        </script>
         <header>
         
         <h1>InstaGrim ! </h1>
@@ -24,30 +42,14 @@
         <nav>
             <ul>
                 <li class="nav"><a href="/Instagrim/upload.jsp">Create Folder</a></li>
-                <li class="nav"><a href="/Instagrim/Images/majed">Sample Images</a></li>
+                
             </ul>
         </nav>
  
         <article>
             <h1>Your Folders</h1>
-        <%
-            java.util.LinkedList<String> lsFolders = (java.util.LinkedList<String>) request.getAttribute("Folders");
-            if (lsFolders == null) {
-        %>
-        <p>No Pictures found</p>
-        <%
-        } else {
-            Iterator<String> iterator;
-            iterator = lsFolders.iterator();
-            while (iterator.hasNext()) {
-                String p = (String) iterator.next();
-
-        %>
-        <a href="/Instagrim/Images/<%=p%>" ><% out.println(p); %></a><br/><%
-
-            }
-            }
-        %>
+			<div id="folderlist">
+			</div>
         </article>
         <footer>
             <ul>

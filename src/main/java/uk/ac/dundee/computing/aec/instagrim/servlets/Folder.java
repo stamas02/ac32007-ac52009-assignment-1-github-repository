@@ -1,6 +1,7 @@
 package uk.ac.dundee.computing.aec.instagrim.servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,9 +14,10 @@ import com.datastax.driver.core.Cluster;
 
 import uk.ac.dundee.computing.aec.instagrim.lib.CassandraHosts;
 import uk.ac.dundee.computing.aec.instagrim.lib.Convertors;
-import uk.ac.dundee.computing.aec.instagrim.lib.LoginChecker;
+import uk.ac.dundee.computing.aec.instagrim.lib.JsonRenderer;
 import uk.ac.dundee.computing.aec.instagrim.models.PicModel;
 import uk.ac.dundee.computing.aec.instagrim.stores.Pic;
+import uk.ac.dundee.computing.aec.instagrim.stores.SFolder;
 
 /**
  * Servlet implementation class Folder
@@ -40,23 +42,33 @@ public class Folder extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		String args[] = Convertors.SplitRequestPath(request);
-		if (!LoginChecker.ValidateSession(request))
-		{
-			RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-	        rd.forward(request, response);
-		}
-		
-		DisplayFolders(args[2], request, response);
+		 boolean isJson = args[args.length-1].equals("json");
+		 
+
+		if (isJson)
+			folderListjson(args[2], request, response);
+		else
+			folderListjsp(args[2], request, response);
 	}
 	
-	public void DisplayFolders(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	public void folderListjson(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		PicModel tm = new PicModel();
 		tm.setCluster(cluster);
 		
-		java.util.LinkedList<String> lsFolders = tm.getUserPicsFolders(User);
+		java.util.LinkedList<SFolder> lsFolders = tm.getUserPicsFolders(User);
+		
+        String jasonResponse = JsonRenderer.render(lsFolders);       
+        response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		out.write(jasonResponse);
+		
+	}
+	
+	public void folderListjsp(String User, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
 		RequestDispatcher rd = request.getRequestDispatcher("/UsersFolders.jsp");
-        request.setAttribute("Folders", lsFolders);
+        request.setAttribute("User", User);
         rd.forward(request, response);
 		
 	}
