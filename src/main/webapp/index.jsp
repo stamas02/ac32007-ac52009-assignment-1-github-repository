@@ -36,16 +36,16 @@
                             String UserName = lg.getUsername();
                             if (lg.getlogedin()) {
                     %>
-                <li><a href="/Instagrim/Logout">Log Out</a></li>
+                <li><a href="<%=request.getContextPath()%>/Logout">Log Out</a></li>
                 <li><a href="upload.jsp">Upload</a></li>
-                <li><a href="/Instagrim/Folder/<%=lg.getUsername()%>">Your Images</a></li>
-                <li><a href="/Instagrim/Profile/<%=lg.getUsername()%>">Your profile</a></li>
-                <li><a href="/Instagrim/Users">All user</a></li>
+                <li><a href="<%=request.getContextPath()%>/Folder/<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="<%=request.getContextPath()%>/Profile/<%=lg.getUsername()%>">Your profile</a></li>
+                <li><a href="<%=request.getContextPath()%>/Users">All user</a></li>
                     <%}
                             }else{
                                 %>
                 <li><a href="register.jsp">Register</a></li>
-                <li><a href="/Instagrim/login.jsp">Login</a></li>
+                <li><a href="<%=request.getContextPath()%>/login.jsp">Login</a></li>
                 <%
                                         
                             

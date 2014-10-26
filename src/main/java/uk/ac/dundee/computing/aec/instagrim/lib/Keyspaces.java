@@ -14,14 +14,14 @@ public final class Keyspaces {
     public static void SetUpKeySpaces(Cluster c) {
         try {
             //Add some keyspaces here
-            String createkeyspace = "create keyspace IF NOT EXISTS instagrim  WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}";
-            String CreateFriendTable = "CREATE TABLE IF NOT EXISTS instagrim.friends ("
+            String createkeyspace = "create keyspace IF NOT EXISTS instagrimTS  WITH replication = {'class':'SimpleStrategy', 'replication_factor':1}";
+            String CreateFriendTable = "CREATE TABLE IF NOT EXISTS instagrimTS.friends ("
             		+"user1 text,"
             		+"user2 text,"
             		+"PRIMARY KEY (user1, user2)"
             		+")";
                        
-            String CreateMessagesTable = "CREATE TABLE IF NOT EXISTS instagrim.messages ("
+            String CreateMessagesTable = "CREATE TABLE IF NOT EXISTS instagrimTS.messages ("
             		+"messagetype int,"
             		+"touser text,"
             		+"fromuser text,"
@@ -30,7 +30,7 @@ public final class Keyspaces {
             		+"PRIMARY KEY (messagetype, touser, fromuser, messageid)"
             		+")";
             		
-            String CreatePicsTable = "CREATE TABLE if not exists instagrim.pics ("
+            String CreatePicsTable = "CREATE TABLE if not exists instagrimTS.pics ("
             		+"picid timeuuid PRIMARY KEY,"
             		+"folder ascii,"
             		+"image blob,"
@@ -45,7 +45,7 @@ public final class Keyspaces {
             		+"user ascii"
             		+")";
             
-            String CreatePicsCommentTable = "CREATE TABLE if not exists instagrim.piccomments ("
+            String CreatePicsCommentTable = "CREATE TABLE if not exists instagrimTS.piccomments ("
             		+"picid timeuuid,"
             		+"commentid timeuuid,"
             		+"comment text,"
@@ -53,7 +53,7 @@ public final class Keyspaces {
             		+"PRIMARY KEY (picid, commentid)"
             		+")";
             
-            String CreateUserPiclistTable = "CREATE TABLE if not exists instagrim.userpiclist ("
+            String CreateUserPiclistTable = "CREATE TABLE if not exists instagrimTS.userpiclist ("
             		+"user text,"
             		+"folder text,"
             		+"picid timeuuid,"
@@ -62,9 +62,9 @@ public final class Keyspaces {
             		+"picidindex timeuuid,"
             		+"PRIMARY KEY (user, folder, picid)"
             		+")";
-            String CreateUserPiclistTableIndex = "CREATE INDEX if not exists userpiclist_picid ON instagrim.userpiclist (picidindex)";
+            String CreateUserPiclistTableIndex = "CREATE INDEX if not exists userpiclist_picid ON instagrimTS.userpiclist (picidindex)";
             
-            String CreateUserProfiles = "CREATE TABLE instagrim.userprofiles ("
+            String CreateUserProfiles = "CREATE TABLE instagrimTS.userprofiles ("
             		+"login ascii PRIMARY KEY,"
             		+"dob timestamp,"
             		+"firstname ascii,"
@@ -84,9 +84,9 @@ public final class Keyspaces {
                         statement);
                 ResultSet rs = session
                         .execute(boundStatement);
-                System.out.println("created instagrim ");
+                System.out.println("created instagrimTS ");
             } catch (Exception et) {
-                System.out.println("Can't create instagrim " + et);
+                System.out.println("Can't create instagrimTS " + et);
             }
 
             String[] tables = new String[7];

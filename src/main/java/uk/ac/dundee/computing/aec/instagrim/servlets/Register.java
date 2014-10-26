@@ -110,7 +110,7 @@ public class Register extends HttpServlet
             
         
     	}
-    	response.sendRedirect("/Instagrim");
+    	response.sendRedirect(request.getContextPath());
         
 	
         

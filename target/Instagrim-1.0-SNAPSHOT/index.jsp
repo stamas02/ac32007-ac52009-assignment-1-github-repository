@@ -8,11 +8,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="uk.ac.dundee.computing.aec.instagrim.stores.*" %>
 <!DOCTYPE html>
+
+
+
+
 <html>
     <head>
         <title>Instagrim</title>
         <link rel="stylesheet" type="text/css" href="Styles.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
     </head>
     <body>
         <header>
@@ -23,7 +28,7 @@
             <ul>
 
                
-                <li><a href="upload.jsp">Upload</a></li>
+               
                     <%
                         
                         LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
@@ -31,14 +36,16 @@
                             String UserName = lg.getUsername();
                             if (lg.getlogedin()) {
                     %>
-
-                <li><a href="/Instagrim/Images/<%=lg.getUsername()%>">Your Images</a></li>
-                <li><a href="/Instagrim/Profile/<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="<%=request.getContextPath()%>/Logout">Log Out</a></li>
+                <li><a href="upload.jsp">Upload</a></li>
+                <li><a href="<%=request.getContextPath()%>/Folder/<%=lg.getUsername()%>">Your Images</a></li>
+                <li><a href="<%=request.getContextPath()%>/Profile/<%=lg.getUsername()%>">Your profile</a></li>
+                <li><a href="<%=request.getContextPath()%>/Users">All user</a></li>
                     <%}
                             }else{
                                 %>
-                 <li><a href="register.jsp">Register</a></li>
-                <li><a href="login.jsp">Login</a></li>
+                <li><a href="register.jsp">Register</a></li>
+                <li><a href="<%=request.getContextPath()%>/login.jsp">Login</a></li>
                 <%
                                         
                             

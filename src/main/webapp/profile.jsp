@@ -17,7 +17,7 @@
 
 
 <body>
-<li><a href="/Instagrim/Logout">Log Out</a></li>
+<li><a href="<%=request.getContextPath()%>/Logout">Log Out</a></li>
 
 <%  String User = (String) request.getAttribute("User"); %>
 
@@ -25,9 +25,9 @@
 $( document ).ready(function() {
 	var User = "<%= User %>";
 	
-	var jqxhr = $.getJSON( "/Instagrim/Profile/"+ User + "/json", function(frequests) {
+	var jqxhr = $.getJSON( "<%=request.getContextPath()%>/Profile/"+ User + "/json", function(frequests) {
 		if (frequests != "") // Probably some error :(
-			$('#userprofile').append( "'<img src='/Instagrim/rProfileImage/" + User + "'/><br/>" ); 
+			$('#userprofile').append( "'<img src='<%=request.getContextPath()%>/rProfileImage/" + User + "'/><br/>" ); 
 			$('#userprofile').append("Username: " +  frequests.Username + "<br/>");
 			$('#userprofile').append("Firstname: " +  frequests.FirstName + "<br/>"); 	
 			$('#userprofile').append("Lastname: " +  frequests.LastName + "<br/>"); 	
@@ -35,34 +35,34 @@ $( document ).ready(function() {
 			$('#userprofile').append("Pic number: " +  frequests.Picnumber + "<br/>"); 	
 		});
 		
-	var jqxhr = $.getJSON( "/Instagrim/Friend/"+ User + "/json", function(frequests) {
+	var jqxhr = $.getJSON( "<%=request.getContextPath()%>/Friend/"+ User + "/json", function(frequests) {
 		if(frequests.friendstatus==0)
-			$('#friendStatus').append("<a href='/Instagrim/FriendRequest/" + User + "'>Send Friend Request</a>");
+			$('#friendStatus').append("<a href='<%=request.getContextPath()%>/FriendRequest/" + User + "'>Send Friend Request</a>");
 		else if (frequests.friendstatus==1)
 			$('#friendStatus').append("This user is already your friend");
 		});
 		
-	var jqxhr = $.getJSON( "/Instagrim/Requests/" + User + "/json", function(frequests) {
+	var jqxhr = $.getJSON( "<%=request.getContextPath()%>/Requests/" + User + "/json", function(frequests) {
 		if (frequests != "")
 		{
 			for (var i = 0; i < frequests.Data.length; i++) { 
-				$('#friendRequests').append("<a href='/Instagrim/AcceptFriend/" + frequests.Data[i].Username + "' >" + frequests.Data[i].Username + "</a><br>");
+				$('#friendRequests').append("<a href='<%=request.getContextPath()%>/AcceptFriend/" + frequests.Data[i].Username + "' >" + frequests.Data[i].Username + "</a><br>");
 			}
 		}
 	});
 	
-	var jqxhr = $.getJSON( "/Instagrim/Friends/" + User + "/json", function(frequests) {
+	var jqxhr = $.getJSON( "<%=request.getContextPath()%>/Friends/" + User + "/json", function(frequests) {
 		if (frequests != "")
 		{
 			for (var i = 0; i < frequests.Data.length; i++) { 
-				$('#friendlist').append("<a href='/Instagrim/Profile/" + frequests.Data[i].Username + "' >" + frequests.Data[i].Username + "</a><br>");
+				$('#friendlist').append("<a href='<%=request.getContextPath()%>/Profile/" + frequests.Data[i].Username + "' >" + frequests.Data[i].Username + "</a><br>");
 			}
 		}
 	});
 });
 </script>
 		
-		<li><a href="/Instagrim/Folder/<%=User%>">Images</a></li>
+		<li><a href="<%=request.getContextPath()%>/Folder/<%=User%>">Images</a></li>
 		
 		<div id="friendStatus">
 		</div>

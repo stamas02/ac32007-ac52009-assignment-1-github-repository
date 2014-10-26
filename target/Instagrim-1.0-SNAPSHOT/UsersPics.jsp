@@ -12,46 +12,43 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Instagrim</title>
-        <link rel="stylesheet" type="text/css" href="/Instagrim/Styles.css" />
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/Styles.css" />
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script></head>
     </head>
     <body>
+    <li><a href="<%=request.getContextPath()%>/Logout">Log Out</a></li>
+        <%
+            String User = (String)request.getAttribute("User");
+            String Folder = (String)request.getAttribute("Folder");
+        %>
+        <script>
+        $( document ).ready(function() {
+        	var imageListjason = $.getJSON( "<%=request.getContextPath()%>/Images/<%= User %>/<%= Folder %>/json", function(frequests) {
+        		if (frequests != "")
+        		{
+        			for (var i = 0; i < frequests.Data.length; i++) { 
+        				$('#piccontainer').append('<div style="background-color=blue"><a href="<%=request.getContextPath()%>/Image/' + frequests.Data[i].PicAuthor + '/' + frequests.Data[i].SUUID + '"><img src="<%=request.getContextPath()%>/rThumb/' + frequests.Data[i].PicAuthor + '/' + frequests.Data[i].SUUID + '"/></a></div>');
+        			}
+        		}
+        	});
+			
+		});
+        </script>  
+        
         <header>
         
         <h1>InstaGrim ! </h1>
         <h2>Your world in Black and White</h2>
         </header>
-        
-        <nav>
-            <ul>
-                <li class="nav"><a href="/Instagrim/upload.jsp">Upload</a></li>
-                <li class="nav"><a href="/Instagrim/Images/majed">Sample Images</a></li>
-            </ul>
-        </nav>
- 
-        <article>
-            <h1>Your Pics</h1>
-        <%
-            java.util.LinkedList<Pic> lsPics = (java.util.LinkedList<Pic>) request.getAttribute("Pics");
-            if (lsPics == null) {
-        %>
-        <p>No Pictures found</p>
-        <%
-        } else {
-            Iterator<Pic> iterator;
-            iterator = lsPics.iterator();
-            while (iterator.hasNext()) {
-                Pic p = (Pic) iterator.next();
+		
+		<div id="piccontainer">
+		</div>
+			 
 
-        %>
-        <a href="/Instagrim/Image/<%=p.getSUUID()%>" ><img src="/Instagrim/Thumb/<%=p.getSUUID()%>"></a><br/><%
-
-            }
-            }
-        %>
         </article>
         <footer>
             <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
+                <li class="footer"><a href="<%=request.getContextPath()%>">Home</a></li>
             </ul>
         </footer>
     </body>

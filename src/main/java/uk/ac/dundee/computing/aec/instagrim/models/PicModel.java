@@ -60,7 +60,7 @@ public class PicModel {
 	{
 		Convertors convertor = new Convertors();
 		java.util.UUID comid = convertor.getTimeUUID();
-		 Session session = cluster.connect("instagrim");
+		 Session session = cluster.connect("instagrimTS");
 	     PreparedStatement ps = session.prepare("insert into piccomments (picid,commentid,user,comment) Values(?,?,?,?)");
 	       
 	     BoundStatement boundStatement = new BoundStatement(ps);
@@ -75,7 +75,7 @@ public class PicModel {
     	java.util.LinkedList<SComment> comments = new java.util.LinkedList<SComment>();
 
     	
-    	Session session = cluster.connect("instagrim");
+    	Session session = cluster.connect("instagrimTS");
         ResultSet rs = null;
         PreparedStatement ps = session.prepare("select user,comment,commentid from piccomments where picid =?");
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -125,7 +125,7 @@ public class PicModel {
             byte[] processedb = picdecolour(img,types[1]);
             ByteBuffer processedbuf=ByteBuffer.wrap(processedb);
             int processedlength=processedb.length;
-            Session session = cluster.connect("instagrim");
+            Session session = cluster.connect("instagrimTS");
 
             PreparedStatement psInsertPic = session.prepare("insert into pics ( picid, image,thumb,processed, user, interaction_time,imagelength,thumblength,processedlength,type,name) values(?,?,?,?,?,?,?,?,?,?,?)");
             PreparedStatement psInsertPicToUser = session.prepare("insert into userpiclist ( picid, picidindex, user,folder,accessability, pic_added) values(?,?,?,?,?,?)");
@@ -173,7 +173,7 @@ public class PicModel {
     	java.util.LinkedList<SFolder> folders = new java.util.LinkedList<SFolder>();
 
     	
-    	Session session = cluster.connect("instagrim");
+    	Session session = cluster.connect("instagrimTS");
         ResultSet rs = null;
         PreparedStatement ps = session.prepare("select user,folder from userpiclist where user =?");
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -214,7 +214,7 @@ public class PicModel {
     
     public int getPicAccessabilityByID(java.util.UUID id)
     {
-    	Session session = cluster.connect("instagrim");
+    	Session session = cluster.connect("instagrimTS");
         PreparedStatement ps = session.prepare("select accessability from userpiclist where picidindex = ?");
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -233,7 +233,7 @@ public class PicModel {
     
     public int getPicAccessability(Pic pic)
     {
-    	Session session = cluster.connect("instagrim");
+    	Session session = cluster.connect("instagrimTS");
         PreparedStatement ps = session.prepare("select picid, accessability from userpiclist where user =? AND folder=? ALLOW FILTERING");
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -253,7 +253,7 @@ public class PicModel {
     	
 
         java.util.LinkedList<Pic> Pics = new java.util.LinkedList<>();
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("instagrimTS");
         PreparedStatement ps = session.prepare("select picid, accessability from userpiclist where user =? AND folder=? ALLOW FILTERING");
         ResultSet rs = null;
         BoundStatement boundStatement = new BoundStatement(ps);
@@ -290,7 +290,7 @@ public class PicModel {
     public Pic getPic(int image_type, java.util.UUID picid, String User) {
     	
     	
-        Session session = cluster.connect("instagrim");
+        Session session = cluster.connect("instagrimTS");
         ByteBuffer bImage = null;
         String type = null;
        

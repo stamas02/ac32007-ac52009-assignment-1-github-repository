@@ -23,6 +23,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/guinness/Downloads/instagrim-master/java-json.jar"/>
+	<classpathentry kind="lib" path="/home/guinness/Downloads/instagrim-master/java-json.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/guinness/Downloads/instagrim-master/json-20090211.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

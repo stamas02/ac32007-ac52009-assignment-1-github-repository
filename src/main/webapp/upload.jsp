@@ -15,7 +15,7 @@
         <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script>
     </head>
     <body>
-    <li><a href="/Instagrim/Logout">Log Out</a></li>
+    <li><a href="<%=request.getContextPath()%>/Logout">Log Out</a></li>
     
         <%
         	LoggedIn lg = (LoggedIn) session.getAttribute("LoggedIn");
@@ -25,7 +25,7 @@
         %>
         <script>
         $( document ).ready(function() {
-        	var imageListjason = $.getJSON( "/Instagrim/Folder/<%= User %>/json", function(frequests) {
+        	var imageListjason = $.getJSON( "<%=request.getContextPath()%>/Folder/<%= User %>/json", function(frequests) {
         		if (frequests != "")
         		{
         			for (var i = 0; i < frequests.Data.length; i++) { 
@@ -69,7 +69,7 @@
         </article>
         <footer>
             <ul>
-                <li class="footer"><a href="/Instagrim">Home</a></li>
+                <li class="footer"><a href="<%=request.getContextPath()%>">Home</a></li>
             </ul>
         </footer>
     </body>
